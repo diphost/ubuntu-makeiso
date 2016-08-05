@@ -1,0 +1,108 @@
+## isolinux.cfg
+### D-I config version 2.0
+### search path for the c32 support libraries (libcom32, libutil etc.)
+##path
+##default autoinstall
+##prompt 0
+##timeout 0
+###ui gfxboot bootlogo
+##
+##
+##LABEL autoinstall
+##        menu label ^Minimal autoinstall
+##        kernel /install/vmlinuz
+##        append  auto-install/enable=true preseed/file=/cdrom/preseed/ubuntu-server-minimalvm.seed lang=locale=en_US vga=788 priority=critical initrd=/install/initrd.gz quiet ---
+
+# Always install the virtual kernel.
+d-i     base-installer/kernel/override-image    string linux-virtual
+
+d-i debian-installer/locale string en_US
+
+d-i console-setup/ask_detect boolean false
+d-i keyboard-configuration/layoutcode string us
+d-i keyboard-configuration/variantcode string
+
+d-i netcfg/choose_interface string auto
+
+
+d-i mirror/country string ru
+d-i mirror/http/hostname string archive.ubuntu.com
+d-i mirror/http/directory string /ubuntu
+d-i mirror/http/proxy string
+
+d-i passwd/root-login boolean false
+d-i passwd/user-fullname string Ubuntu User
+d-i passwd/username string ubuntu
+d-i passwd/user-password password insecure
+d-i passwd/user-password-again password insecure
+d-i user-setup/encrypt-home boolean false
+
+d-i clock-setup/utc boolean true
+d-i time/zone string UTC
+
+d-i clock-setup/ntp boolean true
+
+d-i partman-auto/disk string /dev/sda
+d-i partman-auto/method string regular
+d-i partman/unmount_active boolean true
+d-i partman/confirm boolean true
+d-i partman-md/device_remove_md boolean true
+d-i partman-md/confirm boolean true
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-lvm/confirm boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_write_new_label boolean true
+d-i partman-basicfilesystems/choose_label string gpt
+d-i partman-basicfilesystems/default_label string gpt
+d-i partman-partitioning/choose_label string gpt
+d-i partman-partitioning/default_label string gpt
+d-i partman/choose_label string gpt
+d-i partman/default_label string gpt
+partman-partitioning partman-partitioning/choose_label select gpt
+d-i partman-auto/choose_recipe select custom
+d-i partman-auto/expert_recipe string                        \
+      custom ::                                              \
+              32 32 32 free                                  \
+                      $gptonly{ }                            \
+                      $primary{ }                            \
+                      $bios_boot{ }                          \
+                      method{ biosgrub }                     \
+              .                                              \
+              1000 500 1000 linux-swap                       \
+                      $gptonly{ }                            \
+                      $primary{ }                            \
+                      method{ swap } format{ }               \
+              .                                              \
+              1000 1000 -1 xfs                               \
+                      $gptonly{ }                            \
+                      $primary{ }                            \
+                      method{ format } format{ }             \
+                      use_filesystem{ } filesystem{ xfs }    \
+                      mountpoint{ / }                        \
+              .
+
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition string finish
+d-i partman/confirm boolean true
+d-i partman-partitioning/confirm_copy   boolean true
+d-i partman/confirm_new_label       boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+d-i partman/mount_style string uuid
+
+d-i pkgsel/include string openssh-server
+d-i pkgsel/upgrade string none
+
+# Don't even install the standard task.
+tasksel tasksel/skip-tasks      string standard
+
+d-i pkgsel/updatedb boolean true
+
+# Verbose output and no boot splash screen.
+d-i     debian-installer/quiet  boolean false
+d-i     debian-installer/splash boolean false
+
+d-i     grub-installer/timeout  string 0
+
+d-i finish-install/reboot_in_progress note
