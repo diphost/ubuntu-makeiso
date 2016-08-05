@@ -1,0 +1,8 @@
+*\~
+*.swp
+*.bak
+out/*
+exm/*
+tmp/*
+conf/*
+
